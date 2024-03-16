@@ -1,0 +1,12 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  plugins:
+  - custom_lint
+
+linter:
+  rules:
+    prefer_single_quotes: true
+    use_key_in_widget_constructors: false
+    curly_braces_in_flow_control_structures: false
+    empty_catches: false

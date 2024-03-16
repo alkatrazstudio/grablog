@@ -1,0 +1,28 @@
+diff --git a/macos/Runner/DebugProfile.entitlements b/macos/Runner/DebugProfile.entitlements
+index dddb8a3..cd9aecc 100644
+--- a/macos/Runner/DebugProfile.entitlements
++++ b/macos/Runner/DebugProfile.entitlements
+@@ -8,5 +8,9 @@
+ 	<true/>
+ 	<key>com.apple.security.network.server</key>
+ 	<true/>
++	<key>com.apple.security.files.user-selected.read-only</key>
++	<true/>
++	<key>com.apple.security.network.client</key>
++	<true/>
+ </dict>
+ </plist>
+diff --git a/macos/Runner/Release.entitlements b/macos/Runner/Release.entitlements
+index 852fa1a..625af03 100644
+--- a/macos/Runner/Release.entitlements
++++ b/macos/Runner/Release.entitlements
+@@ -4,5 +4,9 @@
+ <dict>
+ 	<key>com.apple.security.app-sandbox</key>
+ 	<true/>
++	<key>com.apple.security.files.user-selected.read-only</key>
++	<true/>
++	<key>com.apple.security.network.client</key>
++	<true/>
+ </dict>
+ </plist>

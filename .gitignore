@@ -1,0 +1,13 @@
+.*
+!.gitignore
+!/.metadata
+!/.github/
+
+/build/
+*.iml
+
+*.*.dart
+/custom_lint.log
+
+**/generated_plugin**
+/macos/Flutter/GeneratedPluginRegistrant.swift
