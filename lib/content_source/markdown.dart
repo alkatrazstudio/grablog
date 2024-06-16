@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 
 import '../common/content.dart';
-import '../common/downloader.dart';
 import '../content_widgets/content_markdown.dart';
+import '../util/downloader.dart';
 
 class Markdown extends ContentSource {
   Markdown({

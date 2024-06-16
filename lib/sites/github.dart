@@ -7,9 +7,9 @@ import 'package:path/path.dart';
 
 import '../common/changelog.dart';
 import '../common/content.dart';
-import '../common/downloader.dart';
 import '../common/site.dart';
 import '../content_source/github_releases.dart';
+import '../util/downloader.dart';
 import '../util/logger.dart';
 
 class GitHubPageMeta {

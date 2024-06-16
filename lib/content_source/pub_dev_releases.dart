@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 
 import '../common/content.dart';
-import '../common/downloader.dart';
 import '../content_widgets/content_html.dart';
+import '../util/downloader.dart';
 
 class PubDevReleasesContentSource extends ContentSource {
   PubDevReleasesContentSource({

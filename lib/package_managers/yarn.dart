@@ -5,9 +5,9 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:pub_semver/pub_semver.dart';
 
-import '../common/downloader.dart';
 import '../common/package.dart';
 import '../common/package_manager.dart';
+import '../util/downloader.dart';
 import '../util/logger.dart';
 
 class YarnPackage extends Package {
