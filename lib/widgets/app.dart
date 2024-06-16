@@ -48,30 +48,34 @@ class App extends StatelessWidget {
       brightness: Brightness.dark,
     );
 
-    return MaterialApp(
-      title: 'GrabLog',
-      theme: ThemeData(
-        brightness: Brightness.light,
-        colorScheme: lightScheme,
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(foregroundColor: lightScheme.onPrimaryContainer)
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(foregroundColor: lightScheme.onPrimaryContainer)
-        )
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        textScaler: TextScaler.noScaling,
       ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        colorScheme: darkScheme,
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(foregroundColor: darkScheme.onPrimaryContainer)
+      child: MaterialApp(
+        title: 'GrabLog',
+        theme: ThemeData(
+          brightness: Brightness.light,
+          colorScheme: lightScheme,
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(foregroundColor: lightScheme.onPrimaryContainer)
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(foregroundColor: lightScheme.onPrimaryContainer)
+          )
         ),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(foregroundColor: darkScheme.onPrimaryContainer)
-        )
-      ),
-      //themeMode: ThemeMode.light,
-      home: Home(cliArgs),
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          colorScheme: darkScheme,
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(foregroundColor: darkScheme.onPrimaryContainer)
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(foregroundColor: darkScheme.onPrimaryContainer)
+          )
+        ),
+        home: Home(cliArgs),
+      )
     );
   }
 
