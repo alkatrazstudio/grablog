@@ -49,7 +49,7 @@ class HistoryItemsListState extends State<HistoryItemsList> {
           child: Row(
             children: [
               Chip(
-                color: MaterialStatePropertyAll(Theme.of(ctx).colorScheme.inversePrimary),
+                color: WidgetStatePropertyAll(Theme.of(ctx).colorScheme.inversePrimary),
                 labelPadding: EdgeInsets.zero,
                 label: Text(
                   '${item.projectName} [${item.packageManagerName}]',

@@ -221,14 +221,14 @@ class PackageInfoPanel extends StatelessWidget {
                         )
                       ),
                       padding: EdgeInsets.zero,
-                      color: MaterialStatePropertyAll(Theme.of(context).colorScheme.secondary),
+                      color: WidgetStatePropertyAll(Theme.of(context).colorScheme.secondary),
                     )
                   ),
                 Padding(
                   padding: Pad.left,
                   child: Chip(
                     label: Text(package.version.toString()),
-                    color: MaterialStatePropertyAll(Theme.of(context).colorScheme.secondaryContainer),
+                    color: WidgetStatePropertyAll(Theme.of(context).colorScheme.secondaryContainer),
                     padding: EdgeInsets.zero,
                   )
                 )

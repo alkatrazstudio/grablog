@@ -242,7 +242,7 @@ class PackagesPaneState extends State<PackagesPane> {
                     )
                   ),
                   padding: EdgeInsets.zero,
-                  color: MaterialStatePropertyAll(Theme.of(context).colorScheme.secondary),
+                  color: WidgetStatePropertyAll(Theme.of(context).colorScheme.secondary),
                 )
             ]
           )
