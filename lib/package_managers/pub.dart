@@ -18,7 +18,7 @@ class PubLockEntry extends LockEntry {
     required this.pubUrl
   });
 
-  final String pubUrl;
+  final String? pubUrl;
 }
 
 class PubPackage extends Package {
@@ -132,9 +132,11 @@ class Pub extends PackageManager {
       var isDev = dependencyFlags.contains('dev');
       var packageName = packageItem.key;
       var packageMap = packageItem.value;
-      String pubUrl;
+      String? pubUrl;
       try {
         pubUrl = packageMap['description']['url'] as String;
+        if(pubUrl != 'https://pub.dev')
+          pubUrl = null;
       } catch(e) {
         Log.exception(e, 'Package $packageName${isDev ? ' (dev)' : ''}, fetching description URL');
         continue;
@@ -149,7 +151,7 @@ class Pub extends PackageManager {
 
       var lockMeta = LockEntryMeta(
         version: version,
-        infoUrl: '$pubUrl/api/packages/$packageName'
+        infoUrl: pubUrl == null ? null : '$pubUrl/api/packages/$packageName'
       );
       var entry = PubLockEntry(
         name: packageName,
