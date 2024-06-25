@@ -65,13 +65,13 @@ jobs:
       run: ./build.sh
 
     - name: Package
-      run: productbuild --component "build/macos/Build/Products/Release/${{ github.event.repository.name }}.app" /Applications/ ${{ github.event.repository.name }}-macos.pkg
+      run: cd build/macos/Build/Products/Release && zip -9 "${{ github.event.repository.name }}-macos.zip" "${{ github.event.repository.name }}.app"
 
     - name: Save
       uses: actions/upload-artifact@v4.3.3
       with:
         name: release-macos
-        path: "*.pkg"
+        path: "*.zip"
 
   build-windows:
     runs-on: windows-2022
@@ -134,7 +134,7 @@ jobs:
     - name: Rename
       run: |
         mv artifacts/release-linux/${{ github.event.repository.name }}-linux.tar.xz artifacts/release-linux/${{ github.event.repository.name }}-linux-${{ steps.version.outputs.version }}.tar.xz
-        mv artifacts/release-macos/${{ github.event.repository.name }}-macos.pkg artifacts/release-macos/${{ github.event.repository.name }}-macos-${{ steps.version.outputs.version }}.pkg
+        mv artifacts/release-macos/${{ github.event.repository.name }}-macos.zip artifacts/release-macos/${{ github.event.repository.name }}-macos-${{ steps.version.outputs.version }}.zip
         mv artifacts/release-windows/${{ github.event.repository.name }}-windows.zip artifacts/release-windows/${{ github.event.repository.name }}-windows-${{ steps.version.outputs.version }}.zip
 
     - name: Release
