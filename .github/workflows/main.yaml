@@ -65,13 +65,15 @@ jobs:
       run: ./build.sh
 
     - name: Package
-      run: cd build/macos/Build/Products/Release && zip -9 "${{ github.event.repository.name }}-macos.zip" "${{ github.event.repository.name }}.app"
+      run: |
+        cd build/macos/Build/Products/Release
+        zip -9 "${{ github.event.repository.name }}-macos.zip" "${{ github.event.repository.name }}.app"
 
     - name: Save
       uses: actions/upload-artifact@v4.3.3
       with:
         name: release-macos
-        path: "*.zip"
+        path: "build/macos/Build/Products/Release/${{ github.event.repository.name }}-macos.zip"
 
   build-windows:
     runs-on: windows-2022
