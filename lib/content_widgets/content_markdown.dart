@@ -32,6 +32,9 @@ class ContentMarkdown extends StatelessWidget {
                 launchUrlString(url);
               }
             },
+          ),
+          const CodeConfig(
+            style: TextStyle()
           )
         ]
       ),
