@@ -20,6 +20,10 @@ class ContentHtml extends StatelessWidget {
         style: {
           'a': Style(
             textDecoration: TextDecoration.none
+          ),
+          'hr': Style(
+            margin: Margins(top: Margin.zero(), bottom: Margin(20, Unit.px)),
+            border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1))
           )
         },
         extensions: [
