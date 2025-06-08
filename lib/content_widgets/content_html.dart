@@ -14,16 +14,18 @@ class ContentHtml extends StatelessWidget {
 
   @override
   Widget build(context) {
-    return Html(
-      data: html,
-      style: {
-        'a': Style(
-          textDecoration: TextDecoration.none
-        )
-      },
-      extensions: [
-        ImageExtension(handleNetworkImages: false)
-      ],
+    return SelectionArea(
+      child: Html(
+        data: html,
+        style: {
+          'a': Style(
+            textDecoration: TextDecoration.none
+          )
+        },
+        extensions: [
+          ImageExtension(handleNetworkImages: false)
+        ],
+      )
     );
   }
 }
