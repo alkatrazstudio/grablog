@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:markdown_widget/markdown_widget.dart';
 
 class ContentMarkdown extends StatelessWidget {
   const ContentMarkdown({
@@ -14,6 +14,6 @@ class ContentMarkdown extends StatelessWidget {
 
   @override
   Widget build(context) {
-    return MarkdownBody(data: markdown);
+    return MarkdownBlock(data: markdown);
   }
 }

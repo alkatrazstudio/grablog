@@ -18,13 +18,13 @@ dependencies:
   data_table_2: 2.6.0
   file_selector: 1.0.3
   flutter_html: 3.0.0
-  flutter_markdown: 0.7.7+1
   flutter_riverpod: 2.6.1
   freezed_annotation: 3.0.0
   html: 0.15.6
   http: 1.4.0
   intl: any
   logger: 2.5.0
+  markdown_widget: 2.3.2+8
   package_info_plus: 8.3.0
   path: 1.9.1
   path_provider: 2.1.5
