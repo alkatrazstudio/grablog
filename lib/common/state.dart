@@ -7,7 +7,7 @@ part 'state.freezed.dart';
 part 'state.g.dart';
 
 @freezed
-class SelectedState with _$SelectedState {
+abstract class SelectedState with _$SelectedState {
   const factory SelectedState({
     required int packageIndex,
     required Map<int, int> packageChangelogIndex,

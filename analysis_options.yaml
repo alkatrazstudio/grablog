@@ -10,3 +10,6 @@ linter:
     use_key_in_widget_constructors: false
     curly_braces_in_flow_control_structures: false
     empty_catches: false
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_const_literals_to_create_immutables: true

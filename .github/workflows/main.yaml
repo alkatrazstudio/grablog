@@ -16,14 +16,14 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4.1.7
+      uses: actions/checkout@v4.2.2
       with:
         persist-credentials: false
 
     - name: Setup Flutter
-      uses: subosito/flutter-action@v2.16.0
+      uses: subosito/flutter-action@v2.19.0
       with:
-        flutter-version: "3.22.3"
+        flutter-version: "3.32.2"
         channel: "stable"
         cache: true
 
@@ -40,24 +40,24 @@ jobs:
       run: tar -cf- -C release "${{ github.event.repository.name }}" | xz -c9e - > "${{ github.event.repository.name }}-linux.tar.xz"
 
     - name: Save
-      uses: actions/upload-artifact@v4.3.3
+      uses: actions/upload-artifact@v4.6.2
       with:
         name: release-linux
         path: "*.tar.xz"
 
   build-macos:
-    runs-on: macos-12
+    runs-on: macos-15
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4.1.7
+      uses: actions/checkout@v4.2.2
       with:
         persist-credentials: false
 
     - name: Setup Flutter
-      uses: subosito/flutter-action@v2.16.0
+      uses: subosito/flutter-action@v2.19.0
       with:
-        flutter-version: "3.22.3"
+        flutter-version: "3.32.2"
         channel: "stable"
         cache: true
 
@@ -70,24 +70,24 @@ jobs:
         zip -r9 "${{ github.event.repository.name }}-macos.zip" "${{ github.event.repository.name }}.app"
 
     - name: Save
-      uses: actions/upload-artifact@v4.3.3
+      uses: actions/upload-artifact@v4.6.2
       with:
         name: release-macos
         path: "build/macos/Build/Products/Release/${{ github.event.repository.name }}-macos.zip"
 
   build-windows:
-    runs-on: windows-2022
+    runs-on: windows-2025
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4.1.3
+      uses: actions/checkout@v4.2.2
       with:
         persist-credentials: false
 
     - name: Setup Flutter
-      uses: subosito/flutter-action@v2.16.0
+      uses: subosito/flutter-action@v2.19.0
       with:
-        flutter-version: "3.22.3"
+        flutter-version: "3.32.2"
         channel: "stable"
         cache: true
 
@@ -101,7 +101,7 @@ jobs:
       run: Compress-Archive -Path "release\${{ github.event.repository.name }}" -DestinationPath "${{ github.event.repository.name }}-windows.zip"
 
     - name: Save
-      uses: actions/upload-artifact@v4.3.3
+      uses: actions/upload-artifact@v4.6.2
       with:
         name: release-windows
         path: "*.zip"
@@ -121,7 +121,7 @@ jobs:
       run: echo "version=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
 
     - name: Checkout
-      uses: actions/checkout@v4.1.7
+      uses: actions/checkout@v4.2.2
       with:
         persist-credentials: false
 
@@ -129,7 +129,7 @@ jobs:
       run: grep -Pzom1 "(?s)\n[##\s]*${{ steps.version.outputs.version }}.*?\n+.*?\K.*?(\n\n|$)" CHANGELOG.md | sed 's/[^[:print:]]//g' > RELEASE.md
 
     - name: Download
-      uses: actions/download-artifact@v4.1.7
+      uses: actions/download-artifact@v4.3.0
       with:
         path: artifacts
 
@@ -140,7 +140,7 @@ jobs:
         mv artifacts/release-windows/${{ github.event.repository.name }}-windows.zip artifacts/release-windows/${{ github.event.repository.name }}-windows-${{ steps.version.outputs.version }}.zip
 
     - name: Release
-      uses: softprops/action-gh-release@v2.0.5
+      uses: softprops/action-gh-release@v2.2.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
