@@ -32,6 +32,7 @@ class Markdown extends ContentSource {
   Widget widgetByRaw(String rawContent) {
     return ContentMarkdown(
       key: ValueKey(this),
+      baseUrl: url,
       markdown: rawContent
     );
   }

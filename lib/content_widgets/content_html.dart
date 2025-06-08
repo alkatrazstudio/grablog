@@ -3,13 +3,16 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_html/flutter_html.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ContentHtml extends StatelessWidget {
   const ContentHtml({
     super.key,
+    required this.baseUrl,
     required this.html
   });
 
+  final String baseUrl;
   final String html;
 
   @override
@@ -19,7 +22,8 @@ class ContentHtml extends StatelessWidget {
         data: html,
         style: {
           'a': Style(
-            textDecoration: TextDecoration.none
+            textDecoration: TextDecoration.none,
+            color: Theme.of(context).colorScheme.primaryFixedDim
           ),
           'hr': Style(
             margin: Margins(top: Margin.zero(), bottom: Margin(20, Unit.px)),
@@ -29,6 +33,12 @@ class ContentHtml extends StatelessWidget {
         extensions: [
           ImageExtension(handleNetworkImages: false)
         ],
+        onLinkTap: (url, attributes, element) {
+          if(url != null && url.isNotEmpty) {
+            url = Uri.parse(baseUrl).resolve(url).toString();
+            launchUrlString(url);
+          }
+        },
       )
     );
   }

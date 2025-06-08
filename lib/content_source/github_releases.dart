@@ -32,6 +32,7 @@ class GitHubReleasesContentSource extends ContentSource {
   Widget widgetByRaw(String rawContent) {
     return ContentHtml(
       key: ValueKey(this),
+      baseUrl: url,
       html: rawContent
     );
   }
