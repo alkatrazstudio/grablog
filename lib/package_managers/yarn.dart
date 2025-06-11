@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:yaml/yaml.dart';
 
 import '../common/package.dart';
 import '../common/package_manager.dart';
@@ -74,6 +75,8 @@ class Yarn extends PackageManager {
     required super.packages
   }): super(name: 'Yarn');
 
+  static var yarn2NameRx = RegExp(r'^(@?[^@]+)@npm:(?:(@?[^@]+)@)?(.+)$');
+
   static Future<Yarn?> fromDirOrFile(String path) async {
     var files = await PackageManager.loadPackagesAndLockFiles(path, 'yarn.lock', 'package.json');
     if(files == null)
@@ -83,7 +86,7 @@ class Yarn extends PackageManager {
     var packageJsonMap = jsonDecode(packagesJson) as Map<String, dynamic>;
     var projectName = (packageJsonMap['name'] as String?) ?? '';
 
-    var lockEntries = await extractLockEntries(lockContent);
+    var lockEntries = extractLockEntries(lockContent);
     var entriesDist = extractEntries(packageJsonMap, false);
     var entriesDev = extractEntries(packageJsonMap, true);
     var packageEntries = entriesDist + entriesDev;
@@ -109,7 +112,7 @@ class Yarn extends PackageManager {
     );
   }
 
-  static Future<List<LockEntry>> extractLockEntries(String lockContent) async {
+  static List<LockEntry> extractLockEntriesFromVersion1(String lockContent) {
     var lockLines = lockContent.split(RegExp(r'[\n\r]+'));
     lockLines.add('');
     var lockEntries = <LockEntry>[];
@@ -174,6 +177,85 @@ class Yarn extends PackageManager {
       }
     }
     return lockEntries;
+  }
+
+  static (String, String) splitNameAndVersionSpec(String fullName) {
+    // examples:
+    // string-env-interpolation@npm:^1.0.1
+    // @apollo/client@npm:^3.9.10
+    // string-width-cjs@npm:string-width@^4.2.0 - here we take the second name, since the first one is overriden by it
+    var match = yarn2NameRx.firstMatch(fullName);
+    if(match == null)
+      throw Exception('$fullName - cannot parse');
+    var name = match.group(2) ?? match.group(1)!;
+    var versionSpec = match.group(3)!;
+    return (name, versionSpec);
+  }
+
+  static List<LockEntry> extractLockEntriesFromVersion2(String lockContent) {
+    var lockMap = loadYaml(lockContent) as YamlMap;
+    var lockEntries = <LockEntry>[];
+    for(var entry in lockMap.entries) {
+      var key = entry.key as String;
+      if(key == '__metadata')
+        continue;
+      if(key.contains('#optional'))
+        continue;
+      if(key.contains('workspace:'))
+        continue;
+      var fullNames = key.split(',').map((s) => s.trim()).toList();
+      var props = entry.value as YamlMap;
+      Version? version;
+      String? infoUrl;
+      if(props.containsKey('version')) {
+        try {
+          var versionStr = props['version'] as String;
+          version = Version.parse(versionStr);
+        } catch(e) {
+          Log.exception(e, 'Package "$key", parsing version');
+        }
+      }
+      if(props.containsKey('resolution')) {
+        try {
+          var resolutionStr = props['resolution'] as String;
+          var (name, _) = splitNameAndVersionSpec(resolutionStr);
+          infoUrl = 'https://registry.yarnpkg.com/$name'; // Yarn 2+ doesn't provide the actual URL
+        } catch(e) {
+          Log.exception(e, 'Package "$key", parsing resolution');
+        }
+      }
+
+      for(var fullName in fullNames) {
+        String name;
+        String versionSpec;
+        try {
+          (name, versionSpec) = splitNameAndVersionSpec(fullName);
+        } catch(e) {
+          Log.exception(e, 'Package "$key", parsing name');
+          continue;
+        }
+
+        var entry = LockEntry(
+          name: name,
+          versionSpec: versionSpec,
+          meta: LockEntryMeta(
+            version: version,
+            infoUrl: infoUrl
+          ),
+          isDev: false
+        );
+        lockEntries.add(entry);
+      }
+    }
+    return lockEntries;
+  }
+
+  static List<LockEntry> extractLockEntries(String lockContent) {
+    var isVersion2 = RegExp(r'^__metadata:$', multiLine: true).hasMatch(lockContent);
+    var entries = isVersion2
+      ? extractLockEntriesFromVersion2(lockContent)
+      : extractLockEntriesFromVersion1(lockContent);
+    return entries;
   }
 
   static List<PackageEntry> extractEntries(Map<String, dynamic> packageJsonMap, bool isDev) {
