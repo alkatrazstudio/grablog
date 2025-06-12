@@ -1,6 +1,13 @@
 # GrabLog - CHANGELOG
 
 
+## v0.2.0 (June 12, 2025)
+
+- Added: Yarn 2+ support
+- Improved: the text in the changelogs is now selectable
+- Improved: the links in the changelogs are now clickable
+
+
 ## v0.1.1 (July 20, 2024)
 
 - Changed: support version query for Dart packages only from the pub.dev
