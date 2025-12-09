@@ -147,6 +147,6 @@ jobs:
       with:
         files: |
           artifacts/release-linux/*.tar.xz
-          artifacts/release-macos/*.pkg
+          artifacts/release-macos/*.zip
           artifacts/release-windows/*.zip
         body_path: RELEASE.md
