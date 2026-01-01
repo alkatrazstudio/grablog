@@ -130,7 +130,7 @@ jobs:
       run: grep -Pzom1 "(?s)\n[##\s]*${{ steps.version.outputs.version }}.*?\n+.*?\K.*?(\n\n|$)" CHANGELOG.md | sed 's/[^[:print:]]//g' > RELEASE.md
 
     - name: Download
-      uses: actions/download-artifact@v6.0.0
+      uses: actions/download-artifact@v7.0.0
       with:
         path: artifacts
 
