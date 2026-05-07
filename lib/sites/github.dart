@@ -74,11 +74,11 @@ class GitHub extends Site {
     for(var script in scripts) {
       try {
         var embeddedData = jsonDecode(script.text);
-        var branch = embeddedData['props']['initialPayload']['repo']['defaultBranch'] as String;
+        var branch = embeddedData['payload']['codeViewLayoutRoute']['repo']['defaultBranch'] as String;
 
         var filenames = <String>[];
         try {
-          var treeItems = embeddedData['props']['initialPayload']['tree']['items'] as List<dynamic>;
+          var treeItems = embeddedData['payload']['codeViewRepoRoute']['tree']['items'] as List<dynamic>;
           for(var (index, treeItem) in treeItems.indexed) {
             try {
               treeItem = treeItem as Map<String, dynamic>;
