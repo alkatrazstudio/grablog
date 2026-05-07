@@ -43,8 +43,8 @@ jobs:
     - name: Save
       uses: actions/upload-artifact@v7.0.1
       with:
-        name: release-linux
-        path: "*.tar.xz"
+        path: "${{ github.event.repository.name }}-linux.tar.xz"
+        archive: false
 
   build-macos:
     runs-on: macos-26
@@ -73,8 +73,8 @@ jobs:
     - name: Save
       uses: actions/upload-artifact@v7.0.1
       with:
-        name: release-macos
         path: "build/macos/Build/Products/Release/${{ github.event.repository.name }}-macos.zip"
+        archive: false
 
   build-windows:
     runs-on: windows-2025-vs2026
@@ -104,8 +104,8 @@ jobs:
     - name: Save
       uses: actions/upload-artifact@v7.0.1
       with:
-        name: release-windows
-        path: "*.zip"
+        path: "${{ github.event.repository.name }}-windows.zip"
+        archive: false
 
   release:
     if: startsWith(github.ref, 'refs/tags/')
@@ -133,12 +133,13 @@ jobs:
       uses: actions/download-artifact@v8.0.1
       with:
         path: artifacts
+        skip-decompress: true
 
     - name: Rename
       run: |
-        mv artifacts/release-linux/${{ github.event.repository.name }}-linux.tar.xz artifacts/release-linux/${{ github.event.repository.name }}-linux-${{ steps.version.outputs.version }}.tar.xz
-        mv artifacts/release-macos/${{ github.event.repository.name }}-macos.zip artifacts/release-macos/${{ github.event.repository.name }}-macos-${{ steps.version.outputs.version }}.zip
-        mv artifacts/release-windows/${{ github.event.repository.name }}-windows.zip artifacts/release-windows/${{ github.event.repository.name }}-windows-${{ steps.version.outputs.version }}.zip
+        mv artifacts/${{ github.event.repository.name }}-linux.tar.xz artifacts/${{ github.event.repository.name }}-linux-${{ steps.version.outputs.version }}.tar.xz
+        mv artifacts/${{ github.event.repository.name }}-macos.zip artifacts/${{ github.event.repository.name }}-macos-${{ steps.version.outputs.version }}.zip
+        mv artifacts/${{ github.event.repository.name }}-windows.zip artifacts/${{ github.event.repository.name }}-windows-${{ steps.version.outputs.version }}.zip
 
     - name: Release
       uses: softprops/action-gh-release@v3.0.0
@@ -146,7 +147,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         files: |
-          artifacts/release-linux/*.tar.xz
-          artifacts/release-macos/*.zip
-          artifacts/release-windows/*.zip
+          artifacts/${{ github.event.repository.name }}-linux-${{ steps.version.outputs.version }}.tar.xz
+          artifacts/${{ github.event.repository.name }}-macos-${{ steps.version.outputs.version }}.zip
+          artifacts/${{ github.event.repository.name }}-windows-${{ steps.version.outputs.version }}.zip
         body_path: RELEASE.md
