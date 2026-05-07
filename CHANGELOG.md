@@ -1,6 +1,11 @@
 # GrabLog - CHANGELOG
 
 
+## v1.0.0 (Jan 1, 2026)
+
+- Only internal changes
+
+
 ## v0.2.0 (June 12, 2025)
 
 - Added: Yarn 2+ support

@@ -13,7 +13,7 @@ fi
 
 flutter --suppress-analytics clean
 flutter --suppress-analytics pub get
-dart run build_runner build --delete-conflicting-outputs
+dart run build_runner build
 flutter --suppress-analytics analyze --no-pub
 
 flutter --suppress-analytics build "$PLATFORM" \

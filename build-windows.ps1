@@ -3,7 +3,7 @@ try {
     flutter --suppress-analytics config --enable-windows-desktop
     flutter --suppress-analytics clean
     flutter --suppress-analytics pub get
-    dart run build_runner build --delete-conflicting-outputs
+    dart run build_runner build
     flutter --suppress-analytics analyze --no-pub
 
     $ts = Get-Date -UFormat %s
