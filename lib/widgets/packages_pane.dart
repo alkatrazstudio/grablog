@@ -73,8 +73,8 @@ class PackagesPaneState extends State<PackagesPane> {
           rowData.updatedVer?.version.toString() ?? '',
           rowData.repoPackage?.latestRelease?.version.toString() ?? ''
         ]));
-        var csv = const ListToCsvConverter().convert(csvRows);
-        return csv;
+        var content = csv.encode(csvRows);
+        return content;
       }
     );
   }
