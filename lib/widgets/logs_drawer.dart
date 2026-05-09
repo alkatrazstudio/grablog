@@ -40,7 +40,7 @@ class LogsDrawer extends StatelessWidget {
                   if(context.mounted)
                     helpPopup(context);
                 },
-                child: const Text('Help')
+                child: const Text('About')
               ),
               ElevatedButton(
                 onPressed: () async {
