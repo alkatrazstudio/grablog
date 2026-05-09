@@ -68,7 +68,7 @@ jobs:
     - name: Package
       run: |
         cd build/macos/Build/Products/Release
-        zip -r9 "${{ github.event.repository.name }}-macos.zip" "${{ github.event.repository.name }}.app"
+        zip -yr9 "${{ github.event.repository.name }}-macos.zip" "${{ github.event.repository.name }}.app"
 
     - name: Save
       uses: actions/upload-artifact@v7.0.1
