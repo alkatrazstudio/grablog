@@ -38,13 +38,13 @@ class TableRowData {
   const TableRowData({
     required this.package,
     required this.index,
-    required this.updatedVer,
+    required this.maxCompatVer,
     required this.repoPackage
   });
 
   final Package package;
   final int index;
-  final PackageVersion? updatedVer;
+  final PackageVersion? maxCompatVer;
   final RepoPackage? repoPackage;
 }
 
@@ -64,13 +64,13 @@ class PackagesPaneState extends State<PackagesPane> {
       getContent: () async {
         var rowsData = currentRowsData();
         var csvRows = <List<String>>[];
-        csvRows.add(['Name', 'Dev', 'Constraint', 'Version', 'Updated', 'Latest']);
+        csvRows.add(['Name', 'Dev', 'Constraint', 'Current', 'Max compatible', 'Latest']);
         csvRows.addAll(rowsData.map((rowData) => [
           rowData.package.name,
           rowData.package.isDev ? 'dev' : '',
           rowData.package.constraintStr,
           rowData.package.version?.toString() ?? '',
-          rowData.updatedVer?.version.toString() ?? '',
+          rowData.maxCompatVer?.version.toString() ?? '',
           rowData.repoPackage?.latestRelease?.version.toString() ?? ''
         ]));
         var content = csv.encode(csvRows);
@@ -122,14 +122,14 @@ class PackagesPaneState extends State<PackagesPane> {
         return;
 
       var constraint = package.constraint;
-      var updatedVer = constraint != null
+      var maxCompatVer = constraint != null
         ? storedRepoPackage?.getLatestReleaseForConstraint(constraint)
         : null;
 
       rowsData.add(TableRowData(
         package: package,
         index: index,
-        updatedVer: updatedVer,
+        maxCompatVer: maxCompatVer,
         repoPackage: storedRepoPackage
       ));
     });
@@ -198,8 +198,8 @@ class PackagesPaneState extends State<PackagesPane> {
                 ),
                 columns: const [
                   DataColumn2(label: Text('Name')),
-                  DataColumn2(label: Align(child: Text('Version')), fixedWidth: 120),
-                  DataColumn2(label: Align(child: Text('Updated')), fixedWidth: 70),
+                  DataColumn2(label: Align(child: Text('Current')), fixedWidth: 120),
+                  DataColumn2(label: Align(child: Text('Max\ncompatible', textAlign: TextAlign.center)), fixedWidth: 90),
                   DataColumn2(label: Align(child: Text('Latest')), fixedWidth: 70)
                 ],
                 border: TableBorder.all(width: 0, color: Theme.of(context).hintColor),
@@ -273,7 +273,7 @@ class PackagesPaneState extends State<PackagesPane> {
         DataCell(
           Align(
             child: Text(
-              rowData.updatedVer?.version.toString() ?? '???',
+              rowData.maxCompatVer?.version.toString() ?? '???',
               textAlign: TextAlign.center
             )
           )
