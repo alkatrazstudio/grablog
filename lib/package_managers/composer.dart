@@ -23,6 +23,7 @@ class ComposerPackage extends Package {
   @override
   Future<RepoPackage> fetchRepoPackage(String infoUrl) async {
     var info = await Downloader.getJsonObject(infoUrl);
+    var bannedConstraints = extractBannedConstraints(info, infoUrl);
     var versions = info['packages'][name] as List<dynamic>;
     var versionObjs = <PackageVersion>[];
     for(var (index, versionItem) in versions.indexed) {
@@ -32,6 +33,8 @@ class ComposerPackage extends Package {
         var versionParts = versionStr.split('.');
         versionStr = '${versionParts[0]}.${versionParts[1]}.${versionParts[2]}';
         var version = Version.parse(versionStr);
+        if(bannedConstraints.any((c) => c.allows(version)))
+          continue;
         var timeStr = versionMap['time'] as String?;
         var releasedAt = timeStr == null ? null : DateTime.tryParse(timeStr);
         var versionObj = PackageVersion(
@@ -80,6 +83,27 @@ class ComposerPackage extends Package {
         versions: versionObjs
     );
     return repoPackage;
+  }
+
+  List<VersionConstraint> extractBannedConstraints(Map<String, dynamic> info, String infoUrl) {
+    var advisories = info['security-advisories'] as List<dynamic>? ?? [];
+    var bannedConstraints = <VersionConstraint>[];
+    for(var (index, advisoryItem) in advisories.indexed) {
+      try {
+        var advisory = advisoryItem as Map<String, dynamic>;
+        var constraintStr = advisory['affectedVersions'] as String;
+        var constraintParts = constraintStr.split('|');
+        for(var constraintPart in constraintParts) {
+          var constraint = Composer.parseConstraint(constraintPart, name, false);
+          if(constraint != null)
+            bannedConstraints.add(constraint);
+        }
+      } catch(e) {
+        logException(e, '$infoUrl > security-advisories[$index]');
+        continue;
+      }
+    }
+    return bannedConstraints;
   }
 }
 
@@ -171,7 +195,7 @@ class Composer extends PackageManager {
       if(!RegExp(r'^[a-zA-Z0-9_\-]+/[a-zA-Z0-9_\-]+$').hasMatch(packageName))
         continue;
       var constraintStr = (packageItem.value as String?) ?? '';
-      var constraint = parseConstraint(constraintStr, packageName);
+      var constraint = parseConstraint(constraintStr, packageName, true);
       var entry = PackageEntry(
         name: packageName,
         constraintStr: constraintStr,
@@ -183,7 +207,11 @@ class Composer extends PackageManager {
     return entries;
   }
 
-  static VersionConstraint? parseConstraint(String constraintStr, String packageName) {
+  static VersionConstraint? parseConstraint(
+    String constraintStr,
+    String packageName,
+    bool convertExactToUseful
+  ) {
     var parts = <String>[];
     var constraintParts = constraintStr.split(',');
     for(var constraintPart in constraintParts) {
@@ -203,7 +231,7 @@ class Composer extends PackageManager {
     var constraintToParse = parts.join(' ');
 
     try {
-      var constraint = PackageManager.parseConstraint(constraintToParse);
+      var constraint = PackageManager.parseConstraint(constraintToParse, convertExactToUseful);
       return constraint;
     } catch(e) {
       Log.exception(e, 'Package: $packageName, parsing constraint');

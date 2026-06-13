@@ -139,8 +139,9 @@ abstract class PackageManager {
     return origConstraint;
   }
 
-  static VersionConstraint parseConstraint(String constraintStr) {
-    constraintStr = PackageManager.toUsefulConstraintString(constraintStr);
+  static VersionConstraint parseConstraint(String constraintStr, [bool convertExactToUseful = true]) {
+    if(convertExactToUseful)
+      constraintStr = PackageManager.toUsefulConstraintString(constraintStr);
     var constraint = VersionConstraint.parse(constraintStr);
     return constraint;
   }
