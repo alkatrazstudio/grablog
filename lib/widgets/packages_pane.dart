@@ -223,6 +223,7 @@ class PackagesPaneState extends State<PackagesPane> {
     return DataRow2(
       key: ValueKey(rowData.package),
       cells: [
+        // Name
         DataCell(
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -247,6 +248,8 @@ class PackagesPaneState extends State<PackagesPane> {
             ]
           )
         ),
+
+        // Current
         DataCell(
           Padding(
             padding: Pad.top,
@@ -270,14 +273,21 @@ class PackagesPaneState extends State<PackagesPane> {
             )
           )
         ),
+
+        // Max compatible
         DataCell(
           Align(
-            child: Text(
-              rowData.maxCompatVer?.version.toString() ?? '???',
-              textAlign: TextAlign.center
+            child: Opacity(
+              opacity: rowData.maxCompatVer?.version == rowData.package.version ? 0.5 : 1,
+              child: Text(
+                rowData.maxCompatVer?.version.toString() ?? '???',
+                textAlign: TextAlign.center
+              )
             )
           )
         ),
+
+        // Latest
         DataCell(
           Align(
             child: FutureBuilder<RepoPackage>(
@@ -305,7 +315,10 @@ class PackagesPaneState extends State<PackagesPane> {
                 var version = repoPackage.latestRelease;
                 if(version == null)
                   return const Text('???');
-                return Text(version.version.toString());
+                return Opacity(
+                  opacity: version.version == rowData.package.version ? 0.5 : 1,
+                  child: Text(version.version.toString())
+                );
               },
             )
           )
