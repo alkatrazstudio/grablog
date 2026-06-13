@@ -184,15 +184,24 @@ class Composer extends PackageManager {
   }
 
   static VersionConstraint? parseConstraint(String constraintStr, String packageName) {
-    String constraintToParse;
-    if(RegExp(r'^[\^=><]*\d+\.\d+$').hasMatch(constraintStr))
-      constraintToParse = '$constraintStr.0';
-    else
-      constraintToParse = constraintStr;
-    if(constraintToParse.startsWith(RegExp(r'\d')))
-      constraintToParse = '=$constraintToParse';
-    if(constraintToParse == '*')
-      constraintToParse = 'any';
+    var parts = <String>[];
+    var constraintParts = constraintStr.split(',');
+    for(var constraintPart in constraintParts) {
+      String part;
+      if(RegExp(r'^[\^=><]*\d+\.\d+$').hasMatch(constraintPart))
+        part = '$constraintPart.0';
+      else if(RegExp(r'^[\^=><]*\d+$').hasMatch(constraintPart))
+        part = '$constraintPart.0.0';
+      else
+        part = constraintPart;
+      if(part == '*')
+        part = 'any';
+      if(part.startsWith('='))
+        part = part.substring(1);
+      parts.add(part);
+    }
+    var constraintToParse = parts.join(' ');
+
     try {
       var constraint = VersionConstraint.parse(constraintToParse);
       return constraint;
