@@ -203,7 +203,7 @@ class Composer extends PackageManager {
     var constraintToParse = parts.join(' ');
 
     try {
-      var constraint = VersionConstraint.parse(constraintToParse);
+      var constraint = PackageManager.parseConstraint(constraintToParse);
       return constraint;
     } catch(e) {
       Log.exception(e, 'Package: $packageName, parsing constraint');

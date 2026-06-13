@@ -221,7 +221,7 @@ class Cargo extends PackageManager {
     }
     try {
       var fullConstraintStr = constraintParts.join(' ');
-      var constraint = VersionConstraint.parse(fullConstraintStr);
+      var constraint = PackageManager.parseConstraint(fullConstraintStr);
       return constraint;
     } catch(e) {
       Log.exception(e, 'Package $packageName, parsing constraint');

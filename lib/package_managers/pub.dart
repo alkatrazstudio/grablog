@@ -190,7 +190,7 @@ class Pub extends PackageManager {
       }
       VersionConstraint? constraint;
       try {
-        constraint = VersionConstraint.parse(constraintStr);
+        constraint = PackageManager.parseConstraint(constraintStr);
       } catch(e) {
         Log.exception(e, 'Package $packageName${isDev ? ' (dev)' : ''}, parsing version constraint');
       }

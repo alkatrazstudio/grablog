@@ -267,7 +267,7 @@ class Yarn extends PackageManager {
       var constraintStr = entry.value as String;
       try {
         var compatConstraintStr = constraintStr.startsWith('=') ? constraintStr.substring(1) : constraintStr;
-        constraint = VersionConstraint.parse(compatConstraintStr);
+        constraint = PackageManager.parseConstraint(compatConstraintStr);
       } catch(e) {
         Log.exception(e, 'Package: ${entry.key}');
       }
