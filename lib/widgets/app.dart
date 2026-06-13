@@ -57,21 +57,53 @@ class App extends StatelessWidget {
         theme: ThemeData(
           brightness: Brightness.light,
           colorScheme: lightScheme,
+          iconButtonTheme: IconButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              enabledMouseCursor: SystemMouseCursors.click
+            )
+          ),
           elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(foregroundColor: lightScheme.onPrimaryContainer)
+            style: ElevatedButton.styleFrom(
+              foregroundColor: lightScheme.onPrimaryContainer,
+              enabledMouseCursor: SystemMouseCursors.click
+            )
           ),
           textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(foregroundColor: lightScheme.onPrimaryContainer)
+            style: TextButton.styleFrom(
+              foregroundColor: lightScheme.onPrimaryContainer,
+              enabledMouseCursor: SystemMouseCursors.click
+            )
+          ),
+          segmentedButtonTheme: SegmentedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              enabledMouseCursor: SystemMouseCursors.click
+            )
           )
         ),
         darkTheme: ThemeData(
           brightness: Brightness.dark,
           colorScheme: darkScheme,
+          iconButtonTheme: IconButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              enabledMouseCursor: SystemMouseCursors.click
+            )
+          ),
           elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(foregroundColor: darkScheme.onPrimaryContainer)
+            style: ElevatedButton.styleFrom(
+              foregroundColor: darkScheme.onPrimaryContainer,
+              enabledMouseCursor: SystemMouseCursors.click
+            )
           ),
           textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(foregroundColor: darkScheme.onPrimaryContainer)
+            style: TextButton.styleFrom(
+              foregroundColor: darkScheme.onPrimaryContainer,
+              enabledMouseCursor: SystemMouseCursors.click
+            )
+          ),
+          segmentedButtonTheme: SegmentedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              enabledMouseCursor: SystemMouseCursors.click
+            )
           )
         ),
         home: Home(cliArgs),

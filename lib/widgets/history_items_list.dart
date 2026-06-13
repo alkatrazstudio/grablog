@@ -56,7 +56,8 @@ class HistoryItemsListState extends State<HistoryItemsList> {
                   style: TextStyle(
                     fontSize: FontSize.xLarge.emValue,
                   ),
-                )
+                ),
+                mouseCursor: SystemMouseCursors.click
               ),
               const SizedBox(width: Pad.pad),
               Expanded(
