@@ -79,8 +79,8 @@ class ComposerPackage extends Package {
     }
 
     var repoPackage = RepoPackage(
-        links: links,
-        versions: versionObjs
+      links: links,
+      versions: versionObjs
     );
     return repoPackage;
   }
@@ -135,10 +135,13 @@ class Composer extends PackageManager {
       var lockEntry = lockEntries.firstWhereOrNull(
         (lockEntry) => lockEntry.name == packageEntry.name && lockEntry.isDev == packageEntry.isDev
       );
+      var constraintStr = packageEntry.constraintStr;
+      if(constraintStr.startsWith('dev-master#'))
+        constraintStr = 'dev-master';
       var package = ComposerPackage(
         name: packageEntry.name,
         version: lockEntry?.meta.version,
-        constraintStr: packageEntry.constraintStr,
+        constraintStr: constraintStr,
         constraint: packageEntry.constraint,
         isDev: packageEntry.isDev,
         infoUrl: lockEntry?.meta.infoUrl
@@ -147,9 +150,9 @@ class Composer extends PackageManager {
     }).toList();
 
     var manager = Composer(
-        filename: lockFilename,
-        projectName: projectName,
-        packages: packages
+      filename: lockFilename,
+      projectName: projectName,
+      packages: packages
     );
     return manager;
   }

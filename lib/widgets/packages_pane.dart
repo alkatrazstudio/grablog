@@ -198,9 +198,9 @@ class PackagesPaneState extends State<PackagesPane> {
                 ),
                 columns: const [
                   DataColumn2(label: Text('Name')),
-                  DataColumn2(label: Align(child: Text('Current')), fixedWidth: 120),
+                  DataColumn2(label: Align(child: Text('Current')), fixedWidth: 90),
                   DataColumn2(label: Align(child: Text('Max\ncompatible', textAlign: TextAlign.center)), fixedWidth: 90),
-                  DataColumn2(label: Align(child: Text('Latest')), fixedWidth: 70)
+                  DataColumn2(label: Align(child: Text('Latest')), fixedWidth: 90)
                 ],
                 border: TableBorder.all(width: 0, color: Theme.of(context).hintColor),
                 dividerThickness: 0,
