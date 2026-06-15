@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as path;
 
 import '../common/package_manager.dart';
 import '../common/state.dart';
@@ -36,11 +36,11 @@ class HomeState extends State<Home> {
     if(latestDir != null)
       return latestDir!;
     if(manager != null)
-      return dirname(manager!.filename);
+      return path.dirname(manager!.filename);
     var items = historyItems.get();
     var latestItem = items.firstOrNull;
     if(latestItem != null)
-      return dirname(latestItem.filename);
+      return path.dirname(latestItem.filename);
     return null;
   }
 
@@ -81,7 +81,7 @@ class HomeState extends State<Home> {
 
   Future<void> openFromFile(BuildContext context, WidgetRef ref, String filename) async {
     await openFromDirOrFile(context, ref, filename);
-    latestDir = dirname(filename);
+    latestDir = path.dirname(filename);
   }
 
   Future<void> open(BuildContext context, WidgetRef ref) async {

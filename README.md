@@ -11,6 +11,11 @@ GrabLog shows what packages can be updated and then shows changelogs for each pa
 * Composer (PHP)
 * Yarn (JavaScript/NodeJS)
 * Cargo (Rust)
+* GitHub Actions
+
+**Note about GitHub Actions:**
+Using the GUI, you can only open the first YAML workflow in the `.github/workflows` directory.
+Pass the YAML file as a CLI argument to open any other workflow.
 
 
 ### Supported operating systems

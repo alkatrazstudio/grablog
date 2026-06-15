@@ -8,6 +8,7 @@ import 'package:pub_semver/pub_semver.dart';
 import '../common/package.dart';
 import '../package_managers/cargo.dart';
 import '../package_managers/composer.dart';
+import '../package_managers/github_actions.dart';
 import '../package_managers/pub.dart';
 import '../package_managers/yarn.dart';
 import '../util/logger.dart';
@@ -107,6 +108,7 @@ abstract class PackageManager {
   static const constructors = [
     Yarn.fromDirOrFile,
     Composer.fromDirOrFile,
+    GitHubActions.fromDirOrFile,
     Pub.fromDirOrFile,
     Cargo.fromDirOrFile
   ];

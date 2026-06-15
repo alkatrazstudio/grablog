@@ -16,10 +16,12 @@ abstract class Package {
     required this.constraintStr,
     required this.constraint,
     required this.isDev,
-    required String? infoUrl
+    required String? infoUrl,
+    this.shortName
   }): _infoUrl = infoUrl;
 
   final String name;
+  final String? shortName;
   final Version? version;
   final String constraintStr;
   final VersionConstraint? constraint;
