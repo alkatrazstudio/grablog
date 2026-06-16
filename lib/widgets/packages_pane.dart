@@ -6,7 +6,6 @@ import 'package:collection/collection.dart';
 import 'package:csv/csv.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 import '../common/package.dart';
 import '../common/package_manager.dart';
@@ -18,8 +17,16 @@ import '../widgets/search_field.dart';
 
 enum PackagesDisplayMode {
   all,
-  upgradeable,
-  outdated
+  toCompatible,
+  toLatest;
+
+  String get label {
+    return switch(this) {
+      .all => 'All',
+      .toCompatible => 'Updatable\nto compatible',
+      .toLatest => 'Updatable\nto latest',
+    };
+  }
 }
 
 class PackagesPane extends StatefulWidget {
@@ -51,7 +58,7 @@ class TableRowData {
 class PackagesPaneState extends State<PackagesPane> {
   static const modePrefsKey = 'packagesDisplayMode';
 
-  var displayMode = PackagesDisplayMode.upgradeable;
+  var displayMode = PackagesDisplayMode.toCompatible;
   var search = '';
   var repoPackages = <int, RepoPackage>{};
 
@@ -89,7 +96,7 @@ class PackagesPaneState extends State<PackagesPane> {
       case PackagesDisplayMode.all:
         return true;
 
-      case PackagesDisplayMode.upgradeable:
+      case PackagesDisplayMode.toCompatible:
         if(packageVersion == null)
           return false;
         var constraint = package.constraint;
@@ -100,7 +107,7 @@ class PackagesPaneState extends State<PackagesPane> {
           return false;
         return packageVersion < latestRelease.version;
 
-      case PackagesDisplayMode.outdated:
+      case PackagesDisplayMode.toLatest:
         if(packageVersion == null)
           return false;
         var latestRelease = storedRepoPackage.latestRelease;
@@ -159,8 +166,8 @@ class PackagesPaneState extends State<PackagesPane> {
             SegmentedButton(
               segments: [
                 buttonSegment(PackagesDisplayMode.all),
-                buttonSegment(PackagesDisplayMode.upgradeable),
-                buttonSegment(PackagesDisplayMode.outdated)
+                buttonSegment(PackagesDisplayMode.toCompatible),
+                buttonSegment(PackagesDisplayMode.toLatest)
               ],
               selected: {displayMode},
               showSelectedIcon: false,
@@ -215,8 +222,8 @@ class PackagesPaneState extends State<PackagesPane> {
 
   ButtonSegment<PackagesDisplayMode> buttonSegment(PackagesDisplayMode mode) {
     var packagesCount = widget.manager.packages.whereIndexed((index, package) => needToShow(package, index, mode)).length;
-    var label = '${toBeginningOfSentenceCase(mode.name)} ($packagesCount)';
-    return ButtonSegment(label: Text(label), value: mode);
+    var label = '${mode.label} ($packagesCount)';
+    return ButtonSegment(label: Text(label, textAlign: TextAlign.center), value: mode);
   }
 
   DataRow2 buildDataRow(TableRowData rowData, bool isSelected, WidgetRef ref) {
