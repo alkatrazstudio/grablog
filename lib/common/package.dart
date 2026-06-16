@@ -16,9 +16,9 @@ abstract class Package {
     required this.constraintStr,
     required this.constraint,
     required this.isDev,
-    required String? infoUrl,
+    required this._infoUrl,
     this.shortName
-  }): _infoUrl = infoUrl;
+  });
 
   final String name;
   final String? shortName;
