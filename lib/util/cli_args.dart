@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import 'package:args/args.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as p;
 
 class CliArgs {
   CliArgs(List<String> args) {
@@ -9,7 +9,7 @@ class CliArgs {
     var results = parser.parse(args);
     var argPath = results.rest.firstOrNull;
     if(argPath != null)
-      argPath = absolute(argPath);
+      argPath = p.absolute(argPath);
     path = argPath;
   }
 

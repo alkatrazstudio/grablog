@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 import '../content_source/markdown.dart';
+import '../content_source/plain_text.dart';
 import '../util/logger.dart';
 
 abstract class ContentSource {
@@ -49,6 +50,8 @@ abstract class ContentSource {
   static ContentSource? byFilenameAndUrl(String filename, String url) {
     if(Markdown.isSupportedFilename(filename))
       return Markdown(url: url);
+    if(PlainText.isSupportedFilename(filename))
+      return PlainText(url: url);
     return null;
   }
 }

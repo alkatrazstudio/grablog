@@ -1,6 +1,13 @@
 # GrabLog - CHANGELOG
 
 
+## v1.0.1 (May 9, 2026)
+
+- Fixed: cannot fetch changelogs from GitHub
+- Fixed: macOS app archive contains duplicated libraries
+- Changed: Help button is now called About
+
+
 ## v1.0.0 (Jan 1, 2026)
 
 - Only internal changes

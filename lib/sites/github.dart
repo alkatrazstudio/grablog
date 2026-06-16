@@ -3,7 +3,7 @@
 import 'dart:convert';
 
 import 'package:html/dom.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as path;
 
 import '../common/changelog.dart';
 import '../common/content.dart';
@@ -29,10 +29,12 @@ class GitHub extends Site {
   }): super(name: 'GitHub');
 
   static const basenames = ['CHANGELOG'];
+  static const String marketplacePrefix = 'https://github.com/marketplace';
 
   GitHubPageMeta? pageMeta;
 
   static GitHub? byUrl(String url) {
+    url = dropExtraSlugFromUrl(url);
     Uri urlObj;
     try {
       urlObj = Uri.parse(url);
@@ -53,11 +55,16 @@ class GitHub extends Site {
     if(urlObj.pathSegments.length < 2)
       return null;
     var author = urlObj.pathSegments[0];
-    var project = withoutExtension(urlObj.pathSegments[1]);
+    var project = path.withoutExtension(urlObj.pathSegments[1]);
     return GitHub(
       author: author,
       project: project
     );
+  }
+
+  static String dropExtraSlugFromUrl(String url) {
+    url = url.replaceFirst('$marketplacePrefix/', 'https://github.com/');
+    return url;
   }
 
   Future<Document> getRootHtml() async {
@@ -113,7 +120,7 @@ class GitHub extends Site {
     var changelogs = <Changelog>[];
     var meta = await getPageMeta();
     for(var filename in meta.filenames) {
-      var fileBasename = basenameWithoutExtension(filename);
+      var fileBasename = path.basenameWithoutExtension(filename);
       if(!basenames.any((name) => fileBasename.toUpperCase() == name))
         continue;
       var url = 'https://raw.githubusercontent.com/$author/$project/${meta.branch}/$filename';

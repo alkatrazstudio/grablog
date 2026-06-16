@@ -11,15 +11,20 @@ GrabLog shows what packages can be updated and then shows changelogs for each pa
 * Composer (PHP)
 * Yarn (JavaScript/NodeJS)
 * Cargo (Rust)
+* GitHub Actions
+
+**Note about GitHub Actions:**
+Using the GUI, you can only open the first YAML workflow in the `.github/workflows` directory.
+Pass the YAML file as a CLI argument to open any other workflow.
 
 
 ### Supported operating systems
 
 | OS             | Download                                                                                                                      | Comments                                                            |
 |----------------|-------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
-| Ubuntu 24.04   | [grablog-linux-v1.0.0.tar.xz](https://github.com/alkatrazstudio/grablog/releases/download/v1.0.0/grablog-linux-v1.0.0.tar.xz) | May work on other distributions                                     |
-| macOS 26 Tahoe | [grablog-macos-v1.0.0.pkg](https://github.com/alkatrazstudio/grablog/releases/download/v1.0.0/grablog-macos-v1.0.0.zip)       | Universal binary (x86_64 + arm64)                                   |
-| Windows 11     | [grablog-windows-v1.0.0.zip](https://github.com/alkatrazstudio/grablog/releases/download/v1.0.0/grablog-windows-v1.0.0.zip)   | Install [vc_redist](https://aka.ms/vs/17/release/vc_redist.x64.exe) |
+| Ubuntu 24.04   | [grablog-linux-v1.0.1.tar.xz](https://github.com/alkatrazstudio/grablog/releases/download/v1.0.1/grablog-linux-v1.0.1.tar.xz) | May work on other distributions                                     |
+| macOS 26 Tahoe | [grablog-macos-v1.0.1.zip](https://github.com/alkatrazstudio/grablog/releases/download/v1.0.1/grablog-macos-v1.0.1.zip)       | Universal binary (x86_64 + arm64)                                   |
+| Windows 11     | [grablog-windows-v1.0.1.zip](https://github.com/alkatrazstudio/grablog/releases/download/v1.0.1/grablog-windows-v1.0.1.zip)   | Install [vc_redist](https://aka.ms/vs/17/release/vc_redist.x64.exe) |
 
 
 ### Info

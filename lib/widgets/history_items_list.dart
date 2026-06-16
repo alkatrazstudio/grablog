@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_html/flutter_html.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as path;
 
 import '../util/history_items.dart';
 import '../widgets/pad.dart';
@@ -56,12 +56,13 @@ class HistoryItemsListState extends State<HistoryItemsList> {
                   style: TextStyle(
                     fontSize: FontSize.xLarge.emValue,
                   ),
-                )
+                ),
+                mouseCursor: SystemMouseCursors.click
               ),
               const SizedBox(width: Pad.pad),
               Expanded(
                 child: Text(
-                  dirname(item.filename),
+                  path.dirname(item.filename),
                   style: TextStyle(
                     color: Theme.of(ctx).colorScheme.onPrimaryContainer
                   ),

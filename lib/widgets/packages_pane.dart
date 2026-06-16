@@ -6,7 +6,6 @@ import 'package:collection/collection.dart';
 import 'package:csv/csv.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 import '../common/package.dart';
 import '../common/package_manager.dart';
@@ -18,8 +17,16 @@ import '../widgets/search_field.dart';
 
 enum PackagesDisplayMode {
   all,
-  upgradeable,
-  outdated
+  toCompatible,
+  toLatest;
+
+  String get label {
+    return switch(this) {
+      .all => 'All',
+      .toCompatible => 'Updatable\nto compatible',
+      .toLatest => 'Updatable\nto latest',
+    };
+  }
 }
 
 class PackagesPane extends StatefulWidget {
@@ -38,20 +45,20 @@ class TableRowData {
   const TableRowData({
     required this.package,
     required this.index,
-    required this.updatedVer,
+    required this.maxCompatVer,
     required this.repoPackage
   });
 
   final Package package;
   final int index;
-  final PackageVersion? updatedVer;
+  final PackageVersion? maxCompatVer;
   final RepoPackage? repoPackage;
 }
 
 class PackagesPaneState extends State<PackagesPane> {
   static const modePrefsKey = 'packagesDisplayMode';
 
-  var displayMode = PackagesDisplayMode.upgradeable;
+  var displayMode = PackagesDisplayMode.toCompatible;
   var search = '';
   var repoPackages = <int, RepoPackage>{};
 
@@ -64,13 +71,13 @@ class PackagesPaneState extends State<PackagesPane> {
       getContent: () async {
         var rowsData = currentRowsData();
         var csvRows = <List<String>>[];
-        csvRows.add(['Name', 'Dev', 'Constraint', 'Version', 'Updated', 'Latest']);
+        csvRows.add(['Name', 'Dev', 'Constraint', 'Current', 'Max compatible', 'Latest']);
         csvRows.addAll(rowsData.map((rowData) => [
           rowData.package.name,
           rowData.package.isDev ? 'dev' : '',
           rowData.package.constraintStr,
           rowData.package.version?.toString() ?? '',
-          rowData.updatedVer?.version.toString() ?? '',
+          rowData.maxCompatVer?.version.toString() ?? '',
           rowData.repoPackage?.latestRelease?.version.toString() ?? ''
         ]));
         var content = csv.encode(csvRows);
@@ -89,7 +96,7 @@ class PackagesPaneState extends State<PackagesPane> {
       case PackagesDisplayMode.all:
         return true;
 
-      case PackagesDisplayMode.upgradeable:
+      case PackagesDisplayMode.toCompatible:
         if(packageVersion == null)
           return false;
         var constraint = package.constraint;
@@ -100,7 +107,7 @@ class PackagesPaneState extends State<PackagesPane> {
           return false;
         return packageVersion < latestRelease.version;
 
-      case PackagesDisplayMode.outdated:
+      case PackagesDisplayMode.toLatest:
         if(packageVersion == null)
           return false;
         var latestRelease = storedRepoPackage.latestRelease;
@@ -122,14 +129,14 @@ class PackagesPaneState extends State<PackagesPane> {
         return;
 
       var constraint = package.constraint;
-      var updatedVer = constraint != null
+      var maxCompatVer = constraint != null
         ? storedRepoPackage?.getLatestReleaseForConstraint(constraint)
         : null;
 
       rowsData.add(TableRowData(
         package: package,
         index: index,
-        updatedVer: updatedVer,
+        maxCompatVer: maxCompatVer,
         repoPackage: storedRepoPackage
       ));
     });
@@ -159,8 +166,8 @@ class PackagesPaneState extends State<PackagesPane> {
             SegmentedButton(
               segments: [
                 buttonSegment(PackagesDisplayMode.all),
-                buttonSegment(PackagesDisplayMode.upgradeable),
-                buttonSegment(PackagesDisplayMode.outdated)
+                buttonSegment(PackagesDisplayMode.toCompatible),
+                buttonSegment(PackagesDisplayMode.toLatest)
               ],
               selected: {displayMode},
               showSelectedIcon: false,
@@ -198,9 +205,9 @@ class PackagesPaneState extends State<PackagesPane> {
                 ),
                 columns: const [
                   DataColumn2(label: Text('Name')),
-                  DataColumn2(label: Align(child: Text('Version')), fixedWidth: 120),
-                  DataColumn2(label: Align(child: Text('Updated')), fixedWidth: 70),
-                  DataColumn2(label: Align(child: Text('Latest')), fixedWidth: 70)
+                  DataColumn2(label: Align(child: Text('Current')), fixedWidth: 90),
+                  DataColumn2(label: Align(child: Text('Max\ncompatible', textAlign: TextAlign.center)), fixedWidth: 90),
+                  DataColumn2(label: Align(child: Text('Latest')), fixedWidth: 90)
                 ],
                 border: TableBorder.all(width: 0, color: Theme.of(context).hintColor),
                 dividerThickness: 0,
@@ -215,14 +222,15 @@ class PackagesPaneState extends State<PackagesPane> {
 
   ButtonSegment<PackagesDisplayMode> buttonSegment(PackagesDisplayMode mode) {
     var packagesCount = widget.manager.packages.whereIndexed((index, package) => needToShow(package, index, mode)).length;
-    var label = '${toBeginningOfSentenceCase(mode.name)} ($packagesCount)';
-    return ButtonSegment(label: Text(label), value: mode);
+    var label = '${mode.label} ($packagesCount)';
+    return ButtonSegment(label: Text(label, textAlign: TextAlign.center), value: mode);
   }
 
   DataRow2 buildDataRow(TableRowData rowData, bool isSelected, WidgetRef ref) {
     return DataRow2(
       key: ValueKey(rowData.package),
       cells: [
+        // Name
         DataCell(
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -247,6 +255,8 @@ class PackagesPaneState extends State<PackagesPane> {
             ]
           )
         ),
+
+        // Current
         DataCell(
           Padding(
             padding: Pad.top,
@@ -270,14 +280,21 @@ class PackagesPaneState extends State<PackagesPane> {
             )
           )
         ),
+
+        // Max compatible
         DataCell(
           Align(
-            child: Text(
-              rowData.updatedVer?.version.toString() ?? '???',
-              textAlign: TextAlign.center
+            child: Opacity(
+              opacity: rowData.maxCompatVer?.version == rowData.package.version ? 0.5 : 1,
+              child: Text(
+                rowData.maxCompatVer?.version.toString() ?? '???',
+                textAlign: TextAlign.center
+              )
             )
           )
         ),
+
+        // Latest
         DataCell(
           Align(
             child: FutureBuilder<RepoPackage>(
@@ -305,7 +322,10 @@ class PackagesPaneState extends State<PackagesPane> {
                 var version = repoPackage.latestRelease;
                 if(version == null)
                   return const Text('???');
-                return Text(version.version.toString());
+                return Opacity(
+                  opacity: version.version == rowData.package.version ? 0.5 : 1,
+                  child: Text(version.version.toString())
+                );
               },
             )
           )

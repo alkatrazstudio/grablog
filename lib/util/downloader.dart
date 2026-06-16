@@ -16,7 +16,7 @@ class Downloader {
   static const waitTimeoutMs = 10;
   static Map<String, int> asyncsCountPerDomain = {};
 
-  static Future<String> get(String url) async {
+  static Future<String> get(String url, {bool isJson = false}) async {
     var cacheDir = await getApplicationCacheDirectory();
     cacheDir = Directory('${cacheDir.path}/downloads');
     var filename = sha256.convert(utf8.encode(url)).toString();
@@ -31,7 +31,10 @@ class Downloader {
 
     var uriObj = Uri.parse(url);
     var result = await waitAndRun(uriObj, () async {
-      var content = await http.read(uriObj);
+      Map<String, String> headers = isJson ? {
+        'Accept': 'application/json'
+      } : {};
+      var content = await http.read(uriObj, headers: headers);
       return content;
     });
     await cacheDir.create();
@@ -46,7 +49,7 @@ class Downloader {
   }
 
   static Future<Map<String, dynamic>> getJsonObject(String url) async {
-    var json = await get(url);
+    var json = await get(url, isJson: true);
     var obj = jsonDecode(json);
     return obj;
   }

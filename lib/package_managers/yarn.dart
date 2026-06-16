@@ -25,9 +25,10 @@ class YarnPackage extends Package {
   Future<RepoPackage> fetchRepoPackage(String infoUrl) async {
     var info = await Downloader.getJsonObject(infoUrl);
     var timeMap = info['time'] as Map<String, dynamic>;
+    var versionsMap = info['versions'] as Map<String, dynamic>;
     var versions = <PackageVersion>[];
     for(var entry in timeMap.entries) {
-      if(entry.key == 'created' || entry.key == 'modified')
+      if(!versionsMap.containsKey(entry.key))
         continue;
       Version version;
       try {
@@ -266,7 +267,7 @@ class Yarn extends PackageManager {
       var constraintStr = entry.value as String;
       try {
         var compatConstraintStr = constraintStr.startsWith('=') ? constraintStr.substring(1) : constraintStr;
-        constraint = VersionConstraint.parse(compatConstraintStr);
+        constraint = PackageManager.parseConstraint(compatConstraintStr);
       } catch(e) {
         Log.exception(e, 'Package: ${entry.key}');
       }

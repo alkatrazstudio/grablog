@@ -1,11 +1,11 @@
 name: grablog
 description: GrabLog
-publish_to: 'none'
-version: 1.0.0+4
+publish_to: none
+version: 1.0.1+5
 
 environment:
-  flutter: ^3.41.9
-  sdk: ^3.11.5
+  flutter: ^3.44.2
+  sdk: ^3.12.2
 
 dependencies:
   flutter:
@@ -27,7 +27,7 @@ dependencies:
   markdown_widget: 2.3.2+8
   package_info_plus: 10.1.0
   path: 1.9.1
-  path_provider: 2.1.5
+  path_provider: 2.1.6
   pub_semver: 2.2.0
   riverpod_annotation: 4.0.2
   shared_preferences: 2.5.5

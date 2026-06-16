@@ -8,6 +8,7 @@ import 'package:pub_semver/pub_semver.dart';
 import '../common/package.dart';
 import '../package_managers/cargo.dart';
 import '../package_managers/composer.dart';
+import '../package_managers/github_actions.dart';
 import '../package_managers/pub.dart';
 import '../package_managers/yarn.dart';
 import '../util/logger.dart';
@@ -71,6 +72,8 @@ abstract class PackageManager {
   final String projectName;
   final packages = <Package>[];
 
+  static final exactConstraintRx = RegExp(r'^\d+\.\d+\.\d+$');
+
   static Future<File?> getFile(String fullPath, String basename) async {
     File file;
     if(path.basename(fullPath) == basename) {
@@ -105,6 +108,7 @@ abstract class PackageManager {
   static const constructors = [
     Yarn.fromDirOrFile,
     Composer.fromDirOrFile,
+    GitHubActions.fromDirOrFile,
     Pub.fromDirOrFile,
     Cargo.fromDirOrFile
   ];
@@ -129,5 +133,18 @@ abstract class PackageManager {
     if(managers.length != 1)
       throw Exception('More than one manager found by filename: $filename');
     return managers.first;
+  }
+
+  static String toUsefulConstraintString(String origConstraint) {
+    if(exactConstraintRx.hasMatch(origConstraint))
+      return '^$origConstraint';
+    return origConstraint;
+  }
+
+  static VersionConstraint parseConstraint(String constraintStr, [bool convertExactToUseful = true]) {
+    if(convertExactToUseful)
+      constraintStr = PackageManager.toUsefulConstraintString(constraintStr);
+    var constraint = VersionConstraint.parse(constraintStr);
+    return constraint;
   }
 }

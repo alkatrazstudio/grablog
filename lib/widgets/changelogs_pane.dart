@@ -205,7 +205,7 @@ class PackageInfoPanel extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  package.name,
+                  package.shortName ?? package.name,
                   style: TextStyle(
                     fontSize: Theme.of(context).textTheme.headlineMedium?.fontSize
                   )

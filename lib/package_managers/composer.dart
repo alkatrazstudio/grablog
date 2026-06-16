@@ -23,6 +23,7 @@ class ComposerPackage extends Package {
   @override
   Future<RepoPackage> fetchRepoPackage(String infoUrl) async {
     var info = await Downloader.getJsonObject(infoUrl);
+    var bannedConstraints = extractBannedConstraints(info, infoUrl);
     var versions = info['packages'][name] as List<dynamic>;
     var versionObjs = <PackageVersion>[];
     for(var (index, versionItem) in versions.indexed) {
@@ -32,6 +33,8 @@ class ComposerPackage extends Package {
         var versionParts = versionStr.split('.');
         versionStr = '${versionParts[0]}.${versionParts[1]}.${versionParts[2]}';
         var version = Version.parse(versionStr);
+        if(bannedConstraints.any((c) => c.allows(version)))
+          continue;
         var timeStr = versionMap['time'] as String?;
         var releasedAt = timeStr == null ? null : DateTime.tryParse(timeStr);
         var versionObj = PackageVersion(
@@ -76,10 +79,31 @@ class ComposerPackage extends Package {
     }
 
     var repoPackage = RepoPackage(
-        links: links,
-        versions: versionObjs
+      links: links,
+      versions: versionObjs
     );
     return repoPackage;
+  }
+
+  List<VersionConstraint> extractBannedConstraints(Map<String, dynamic> info, String infoUrl) {
+    var advisories = info['security-advisories'] as List<dynamic>? ?? [];
+    var bannedConstraints = <VersionConstraint>[];
+    for(var (index, advisoryItem) in advisories.indexed) {
+      try {
+        var advisory = advisoryItem as Map<String, dynamic>;
+        var constraintStr = advisory['affectedVersions'] as String;
+        var constraintParts = constraintStr.split('|');
+        for(var constraintPart in constraintParts) {
+          var constraint = Composer.parseConstraint(constraintPart, name, false);
+          if(constraint != null)
+            bannedConstraints.add(constraint);
+        }
+      } catch(e) {
+        logException(e, '$infoUrl > security-advisories[$index]');
+        continue;
+      }
+    }
+    return bannedConstraints;
   }
 }
 
@@ -111,10 +135,13 @@ class Composer extends PackageManager {
       var lockEntry = lockEntries.firstWhereOrNull(
         (lockEntry) => lockEntry.name == packageEntry.name && lockEntry.isDev == packageEntry.isDev
       );
+      var constraintStr = packageEntry.constraintStr;
+      if(constraintStr.startsWith('dev-master#'))
+        constraintStr = 'dev-master';
       var package = ComposerPackage(
         name: packageEntry.name,
         version: lockEntry?.meta.version,
-        constraintStr: packageEntry.constraintStr,
+        constraintStr: constraintStr,
         constraint: packageEntry.constraint,
         isDev: packageEntry.isDev,
         infoUrl: lockEntry?.meta.infoUrl
@@ -123,9 +150,9 @@ class Composer extends PackageManager {
     }).toList();
 
     var manager = Composer(
-        filename: lockFilename,
-        projectName: projectName,
-        packages: packages
+      filename: lockFilename,
+      projectName: projectName,
+      packages: packages
     );
     return manager;
   }
@@ -171,7 +198,7 @@ class Composer extends PackageManager {
       if(!RegExp(r'^[a-zA-Z0-9_\-]+/[a-zA-Z0-9_\-]+$').hasMatch(packageName))
         continue;
       var constraintStr = (packageItem.value as String?) ?? '';
-      var constraint = parseConstraint(constraintStr, packageName);
+      var constraint = parseConstraint(constraintStr, packageName, true);
       var entry = PackageEntry(
         name: packageName,
         constraintStr: constraintStr,
@@ -183,18 +210,31 @@ class Composer extends PackageManager {
     return entries;
   }
 
-  static VersionConstraint? parseConstraint(String constraintStr, String packageName) {
-    String constraintToParse;
-    if(RegExp(r'^[\^=><]*\d+\.\d+$').hasMatch(constraintStr))
-      constraintToParse = '$constraintStr.0';
-    else
-      constraintToParse = constraintStr;
-    if(constraintToParse.startsWith(RegExp(r'\d')))
-      constraintToParse = '=$constraintToParse';
-    if(constraintToParse == '*')
-      constraintToParse = 'any';
+  static VersionConstraint? parseConstraint(
+    String constraintStr,
+    String packageName,
+    bool convertExactToUseful
+  ) {
+    var parts = <String>[];
+    var constraintParts = constraintStr.split(',');
+    for(var constraintPart in constraintParts) {
+      String part;
+      if(RegExp(r'^[\^=><]*\d+\.\d+$').hasMatch(constraintPart))
+        part = '$constraintPart.0';
+      else if(RegExp(r'^[\^=><]*\d+$').hasMatch(constraintPart))
+        part = '$constraintPart.0.0';
+      else
+        part = constraintPart;
+      if(part == '*')
+        part = 'any';
+      if(part.startsWith('='))
+        part = part.substring(1);
+      parts.add(part);
+    }
+    var constraintToParse = parts.join(' ');
+
     try {
-      var constraint = VersionConstraint.parse(constraintToParse);
+      var constraint = PackageManager.parseConstraint(constraintToParse, convertExactToUseful);
       return constraint;
     } catch(e) {
       Log.exception(e, 'Package: $packageName, parsing constraint');
