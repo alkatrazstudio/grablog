@@ -135,15 +135,22 @@ abstract class PackageManager {
     return managers.first;
   }
 
-  static String toUsefulConstraintString(String origConstraint) {
-    if(exactConstraintRx.hasMatch(origConstraint))
-      return '^$origConstraint';
-    return origConstraint;
+  static VersionConstraint? toUsefulConstraint(String origConstraint) {
+    try {
+      var exactVersion = Version.parse(origConstraint);
+      var constraint = VersionConstraint.compatibleWith(exactVersion);
+      return constraint;
+    } catch(e) {
+      return null;
+    }
   }
 
   static VersionConstraint parseConstraint(String constraintStr, [bool convertExactToUseful = true]) {
-    if(convertExactToUseful)
-      constraintStr = PackageManager.toUsefulConstraintString(constraintStr);
+    if(convertExactToUseful) {
+      var constraint = PackageManager.toUsefulConstraint(constraintStr);
+      if(constraint != null)
+        return constraint;
+    }
     var constraint = VersionConstraint.parse(constraintStr);
     return constraint;
   }
