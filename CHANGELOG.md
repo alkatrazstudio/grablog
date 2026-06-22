@@ -1,6 +1,20 @@
 # GrabLog - CHANGELOG
 
 
+## v1.1.0 (June 22, 2026)
+
+- Added: support for GitHub Actions (see README for an important note)
+- Added: support for CHANGELOG.TXT files
+- Changed: hide Composer package versions with known security advisories
+- Changed: removed the commit hash for dev-master versions for Composer packages
+- Changed: show max non-breaking version when exact-version constraint is set
+- Fixed: parsing constraints for Composer
+- Fixed: showing unavailable versions in Yarn
+- Improved: change the text for some labels to be more understandable
+- Improved: dim the version if it's the same as the current one
+- Improved: make clickable elements have a hand cursor
+
+
 ## v1.0.1 (May 9, 2026)
 
 - Fixed: cannot fetch changelogs from GitHub
